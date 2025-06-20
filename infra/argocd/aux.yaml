@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: auxiliary-service
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/Logoffski/DevOps-Challenge.git
+    targetRevision: HEAD
+    path: deploy/aux
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: auxiliary-service
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

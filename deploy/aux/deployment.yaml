@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auxiliary-service
+  namespace: auxiliary-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auxiliary-service
+  template:
+    metadata:
+      labels:
+        app: auxiliary-service
+    spec:
+      containers:
+        - name: auxiliary-service
+          image: ghcr.io/logoffski/devops-challenge/auxiliary-service:latest
+          ports:
+            - containerPort: 8001
