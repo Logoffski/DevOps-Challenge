@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: main-api
-          image: ghcr.io/logoffski/devops-challenge/main-api:latest
+          image: ghcr.io/logoffski/main-api:latest
       imagePullSecrets:
         - name: ghcr-creds
           ports:

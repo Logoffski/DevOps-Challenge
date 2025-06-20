@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: auxiliary-service
-          image: ghcr.io/logoffski/devops-challenge/auxiliary-service:latest
+          image: ghcr.io/logoffski/auxiliary-service:latest
       imagePullSecrets:
         - name: ghcr-creds
           ports:
