@@ -3,4 +3,4 @@ resources:
   - service.yaml
 images:
   - name: ghcr.io/logoffski/devops-challenge/main-api
-    newTag: latest
+    newTag: 1a9a018b9a43d82f791c0d38460ce892b66fcd88
