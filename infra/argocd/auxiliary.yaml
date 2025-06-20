@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: https://github.com/Logoffski/DevOps-Challenge.git
     targetRevision: HEAD
-    path: deploy/aux
+    path: deploy/auxiliary
   destination:
     server: https://kubernetes.default.svc
     namespace: auxiliary-service

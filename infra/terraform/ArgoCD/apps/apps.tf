@@ -13,5 +13,5 @@ resource "kubernetes_namespace" "auxiliary" {
   }
 }
 resource "kubernetes_manifest" "auxiliary" {
-  manifest = yamldecode(file("${path.module}/../../../argocd/aux.yaml"))
+  manifest = yamldecode(file("${path.module}/../../../argocd/auxiliary.yaml"))
 }

@@ -1,5 +1,5 @@
 FROM python:3.10-slim
-WORKDIR /aux
+WORKDIR /auxiliary
 COPY src/app.py .
 RUN pip install flask
 EXPOSE 8001
