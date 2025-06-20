@@ -2,5 +2,5 @@ resources:
   - deployment.yaml
   - service.yaml
 images:
-  - name: ghcr.io/Logoffski/DevOps-Challenge/main-api
+  - name: ghcr.io/logoffski/devops-challenge/main-api
     newTag: latest

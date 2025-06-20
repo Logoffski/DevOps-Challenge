@@ -15,6 +15,6 @@ spec:
     spec:
       containers:
         - name: main-api
-          image: ghcr.io/Logoffski/DevOps-Challenge/main-api:latest
+          image: ghcr.io/logoffski/devops-challenge/main-api:latest
           ports:
             - containerPort: 8000
