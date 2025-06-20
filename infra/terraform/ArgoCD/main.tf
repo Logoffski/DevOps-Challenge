@@ -18,3 +18,8 @@ resource "helm_release" "argocd" {
   }
 
 }
+
+module "argocd_apps" {
+  source = "./apps"
+  depends_on = [ helm_release.argocd, kubernetes_namespace.argocd ]
+}

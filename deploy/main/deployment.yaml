@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: main-api
+  namespace: main-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: main-api
+  template:
+    metadata:
+      labels:
+        app: main-api
+    spec:
+      containers:
+        - name: main-api
+          image: ghcr.io/Logoffski/DevOps-Challenge/main-api:latest
+          ports:
+            - containerPort: 8000

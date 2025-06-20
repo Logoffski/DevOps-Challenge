@@ -1,0 +1,50 @@
+name: Deploy Main API
+
+on:
+  push:
+    paths:
+      - 'services/main/**'
+      - '.github/workflows/main.yaml'
+
+permissions:
+  contents: write
+  packages: write
+  id-token: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push image
+        run: |
+          docker build -t ghcr.io/${{ github.repository_owner }}/main-api:${{ github.sha }} services/main
+          docker push ghcr.io/${{ github.repository_owner }}/main-api:${{ github.sha }}
+
+      - name: Install yq
+        run: |
+          sudo snap install yq
+
+      - name: Patch kustomization.yaml
+        run: |
+          yq -i '.images[0].newTag = "${{ github.sha }}"' deploy/main/kustomization.yaml
+
+      - name: Commit and push changes
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add deploy/main-api/kustomization.yaml
+          git commit -m "Update main-api image tag to ${{ github.sha }}"
+          git push
