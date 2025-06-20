@@ -30,8 +30,12 @@ jobs:
 
       - name: Build and push image
         run: |
-          docker build -t ghcr.io/${{ github.repository_owner }}/main-api:${{ github.sha }} services/main
-          docker push ghcr.io/${{ github.repository_owner }}/main-api:${{ github.sha }}
+          # Convert owner and repo name to lowercase BECAUSE GITHUB IS WEIRD
+          OWNER_LOWER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          IMAGE_NAME="main-api"
+
+          docker build -t ghcr.io/$OWNER_LOWER/$IMAGE_NAME:${{ github.sha }} services/main
+          docker push ghcr.io/$OWNER_LOWER/$IMAGE_NAME:${{ github.sha }}
 
       - name: Install yq
         run: |
