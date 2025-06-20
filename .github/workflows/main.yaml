@@ -49,6 +49,6 @@ jobs:
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
-          git add deploy/main-api/kustomization.yaml
+          git add deploy/main/kustomization.yaml
           git commit -m "Update main-api image tag to ${{ github.sha }}"
           git push
