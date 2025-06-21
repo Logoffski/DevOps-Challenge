@@ -16,7 +16,7 @@ spec:
       containers:
         - name: main-api
           image: ghcr.io/logoffski/main-api:latest
-      imagePullSecrets:
-        - name: ghcr-creds
           ports:
             - containerPort: 8000
+      imagePullSecrets:
+        - name: ghcr-creds

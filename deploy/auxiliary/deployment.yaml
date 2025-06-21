@@ -16,7 +16,7 @@ spec:
       containers:
         - name: auxiliary-service
           image: ghcr.io/logoffski/auxiliary-service:latest
-      imagePullSecrets:
-        - name: ghcr-creds
           ports:
             - containerPort: 8001
+      imagePullSecrets:
+        - name: ghcr-creds
