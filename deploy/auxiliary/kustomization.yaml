@@ -2,5 +2,5 @@ resources:
   - deployment.yaml
   - service.yaml
 images:
-  - name: ghcr.io/logoffski/devops-challenge/auxiliary-service
+  - name: ghcr.io/logoffski/auxiliary-service
     newTag: c7edf4c8b3c8a7fac1f7e9f673e231a79e27a711
