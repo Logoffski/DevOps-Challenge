@@ -45,7 +45,7 @@ jobs:
 
       - name: Patch kustomization.yaml
         run: |
-          yq -i '.images[0].newTag = "$VERSION"' deploy/main/kustomization.yaml
+          yq -i ".images[0].newTag = \"${VERSION}\"" deploy/main/kustomization.yaml
 
       - name: Commit and push changes
         run: |
