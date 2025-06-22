@@ -3,4 +3,4 @@ resources:
   - service.yaml
 images:
   - name: ghcr.io/logoffski/auxiliary-service
-    newTag: 3e1880f99ae90811edff474c12a75b071f3e0e83
+    newTag: $VERSION
