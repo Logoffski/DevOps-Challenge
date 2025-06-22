@@ -20,6 +20,23 @@ resource "kubernetes_manifest" "main_api" {
 }
 
 resource "kubernetes_manifest" "auxiliary" {
-  depends_on = [ kubernetes_namespace.auxiliary ]
+  depends_on = [ kubernetes_namespace.auxiliary, kubernetes_secret.aws_creds ]
   manifest = yamldecode(file("${path.module}/../../../argocd/auxiliary.yaml"))
+}
+
+## Required kubernetes secrets
+
+resource "kubernetes_secret" "aws_creds" {
+  metadata {
+    name      = "aws-creds"
+    namespace = kubernetes_namespace.auxiliary.metadata[0].name
+  }
+
+  data = {
+    AWS_ACCESS_KEY_ID     = base64encode(aws_iam_access_key.app_service_user.id)
+    AWS_SECRET_ACCESS_KEY = base64encode(aws_iam_access_key.app_service_user.secret)
+    AWS_REGION            = base64encode(var.aws_region)
+  }
+
+  type = "Opaque"
 }
