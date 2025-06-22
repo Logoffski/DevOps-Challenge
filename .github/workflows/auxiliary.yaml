@@ -14,6 +14,8 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ github.sha }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -34,8 +36,8 @@ jobs:
           OWNER_LOWER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
           IMAGE_NAME="auxiliary-service"
 
-          docker build -t ghcr.io/$OWNER_LOWER/$IMAGE_NAME:${{ github.sha }} services/auxiliary
-          docker push ghcr.io/$OWNER_LOWER/$IMAGE_NAME:${{ github.sha }}
+          docker build --build-arg VERSION=$VERSION -t ghcr.io/$OWNER_LOWER/$IMAGE_NAME:$VERSION services/auxiliary
+          docker push ghcr.io/$OWNER_LOWER/$IMAGE_NAME:$VERSION
 
       - name: Install yq
         run: |
@@ -43,12 +45,12 @@ jobs:
 
       - name: Patch kustomization.yaml
         run: |
-          yq -i '.images[0].newTag = "${{ github.sha }}"' deploy/auxiliary/kustomization.yaml
+          yq -i '.images[0].newTag = "$VERSION"' deploy/auxiliary/kustomization.yaml
 
       - name: Commit and push changes
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add deploy/auxiliary/kustomization.yaml
-          git commit -m "Update auxiliary-service image tag to ${{ github.sha }}"
+          git commit -m "Update auxiliary-service image tag to $VERSION"
           git push
