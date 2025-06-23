@@ -1,0 +1,3 @@
+## ideally, the versions should be pinned
+flask
+requests
