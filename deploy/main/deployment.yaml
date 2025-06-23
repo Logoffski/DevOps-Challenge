@@ -29,6 +29,6 @@ spec:
             httpGet:
               path: /readyz
               port: 8000
-            initialDelaySeconds: 2
-            periodSeconds: 5
+            initialDelaySeconds: 10
+            periodSeconds: 20
             failureThreshold: 3
