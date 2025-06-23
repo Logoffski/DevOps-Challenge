@@ -3,4 +3,4 @@ resources:
   - service.yaml
 images:
   - name: ghcr.io/logoffski/main-api
-    newTag: 97a2cd5d648d2f2de5a2e781128e2d003b3c9496
+    newTag: 05381237521317c714dd0cf8eaf6d7268d889715
