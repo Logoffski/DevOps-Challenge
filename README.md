@@ -55,7 +55,9 @@ provider "aws" {
 
 ### 1.3. Global infrastructure setup
 
-The **global** terraform module contains infrastructure that is environment-agnostic, like ArgoCD
+The **global** terraform module contains infrastructure that is environment-agnostic.
+
+For the purposes of the code-challenge, only ArgoCD is created in this module:
 
 ```bash
 terraform -chdir=infra/terraform/global init
@@ -64,7 +66,9 @@ terraform -chdir=infra/terraform/global apply
 
 ### 1.4. Environment infrastructure setup
 
-Environment-specific resources. Provision services, IAM users, secrets, and namespaces:
+The **environment* module contains environment-specific resources. 
+
+Provisions services, IAM users, secrets, and namespaces:
 
 ```bash
 terraform -chdir=infra/terraform/environment init
@@ -171,12 +175,12 @@ Minimal read-only access to:
 - KMS decrypt for SSM
 
 In addition, the user has access to:
-- List All s3 buckets in the AWS account
-- List all parameters in Parameter Store
+- List all S3 buckets in the AWS account
+- List all parameters in the Parameter Store
 
 ### 5.3. SSM Parameters
 
-Access keys for the created user are also saved in the Parameter Store:
+Access keys for the created user are additionally saved in the Parameter Store:
 
 ```
 /${env}/service_user/access_key_id
@@ -216,7 +220,7 @@ The following documentation assumes you already have an AWS account and a workin
 
 ### 7.1. Terraform Setup
 
-Configure AWS provider in both *global* and *environment* modules:
+Configure AWS provider in both **global** and **environment** modules:
 
 The code is designed to use your local cached IAM credentials, created via `aws sso configure` and `aws sso login --profile "yourprofilename"`
 
@@ -225,7 +229,8 @@ To use your profile, create a terraform.tfvars file in both modules with the fol
 aws_profile = "yourprofilename"
 ```
 Alternatively, you can use any other authentication method supported by the AWS provider.
-Lastly, change `aws_region` in variables.tf in both root modules to your desired region.
+
+Lastly, change `aws_region` in `variables.tf` in both root modules to your desired region.
 
 ### 7.2. Local Apply
 
@@ -312,4 +317,7 @@ curl http://localhost:8080/parameter?name=/test/apps/config/env_name
 
 curl http://localhost:8080/buckets
 {"auxiliary_version":"05381237521317c714dd0cf8eaf6d7268d889715","buckets":["test-apps-main","test-apps-secondary"],"main_version":"05381237521317c714dd0cf8eaf6d7268d889715"}
+
+curl http://localhost:8080/parameters
+{"auxiliary_version":"05381237521317c714dd0cf8eaf6d7268d889715","main_version":"05381237521317c714dd0cf8eaf6d7268d889715","parameters":["/test/apps/config/env_name","/test/apps/config/hotel","/test/apps/config/locale","/test/service_user/access_key_id","/test/service_user/secret_access_key"]}
 ```
