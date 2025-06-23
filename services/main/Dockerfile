@@ -1,5 +1,8 @@
 FROM python:3.10-slim
 
+## Create a non-root user
+RUN useradd --create-home --shell /bin/bash appuser
+
 WORKDIR /main
 
 ## Set default version
