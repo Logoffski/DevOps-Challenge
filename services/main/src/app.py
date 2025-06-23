@@ -1,6 +1,7 @@
-from flask import Flask, jsonify
+from flask import Flask, request, jsonify
 import os
 import requests
+import urllib.parse
 
 app = Flask(__name__)
 VERSION = os.getenv("VERSION", "unknown")
@@ -12,6 +13,20 @@ def fetch_aux(path):
         return resp.json()
     except Exception as e:
         return {"error": str(e)}
+
+@app.route("/healthz", methods=["GET"])
+def liveness():
+    return jsonify({"status": "ok"}), 200
+
+@app.route("/readyz", methods=["GET"])
+def readiness():
+    try:
+        resp = requests.get(f"{AUXILIARY_URL}/readyz", timeout=2)
+        if resp.status_code == 200:
+            return jsonify({"status": "ready"}), 200
+        return jsonify({"status": "not ready", "error": resp.text}), 503
+    except Exception as e:
+        return jsonify({"status": "not ready", "error": str(e)}), 503
 
 @app.route('/buckets', methods=['GET'])
 def get_buckets():
@@ -29,17 +44,14 @@ def get_parameters():
         **aux_data
     })
 
-@app.route('/parameter/<name>', methods=['GET'])
-def get_parameter(name):
-    aux_data = fetch_aux(f"/parameter/{name}")
-    return jsonify({
-        "main_version": VERSION,
-        **aux_data
-    })
-
-@app.route('/version', methods=['GET'])
-def get_versions():
-    aux_data = fetch_aux("/version")
+@app.route('/parameter', methods=['GET'])
+def get_parameter():
+    name = request.args.get("name")
+    if not name:
+        return jsonify({"error": "Missing 'name' query parameter"}), 400
+    ## Apparently we need to encode the URL again
+    encoded = urllib.parse.quote(name, safe='')
+    aux_data = fetch_aux(f"/parameter?name={encoded}")
     return jsonify({
         "main_version": VERSION,
         **aux_data

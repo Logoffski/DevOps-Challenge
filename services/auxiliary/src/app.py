@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, request, jsonify
 import os
 import boto3
 
@@ -7,9 +7,19 @@ app = Flask(__name__)
 VERSION = os.getenv("VERSION", "unknown")
 REGION = os.getenv("AWS_REGION")
                    
-@app.route('/version', methods=['GET'])
-def get_version():
-    return jsonify({"auxiliary_version": VERSION})
+@app.route("/healthz", methods=["GET"])
+def liveness():
+    return jsonify({"status": "ok"}), 200
+
+@app.route("/readyz", methods=["GET"])
+def readiness():
+    try:
+        ssm = boto3.client("ssm", region_name=REGION)
+        ssm.describe_parameters(MaxResults=1)
+        return jsonify({"status": "ready"}), 200
+    except Exception as e:
+        return jsonify({"status": "not ready", "error": str(e)}), 503
+
 
 @app.route('/buckets', methods=['GET'])
 def list_buckets():
@@ -31,8 +41,11 @@ def list_parameters():
         "auxiliary_version": VERSION
     })
 
-@app.route('/parameter/<name>', methods=['GET'])
-def get_parameter(name):
+@app.route('/parameter', methods=['GET'])
+def get_parameter():
+    name = request.args.get("name")
+    if not name:
+        return jsonify({"error": "Missing 'name' query parameter"}), 400
     ssm = boto3.client("ssm", region_name=REGION)
     response = ssm.get_parameter(Name=name, WithDecryption=True)
     return jsonify({

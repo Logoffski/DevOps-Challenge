@@ -34,3 +34,17 @@ spec:
                 secretKeyRef:
                   name: aws-creds
                   key: AWS_REGION
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8001
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8001
+            initialDelaySeconds: 2
+            periodSeconds: 5
+            failureThreshold: 3
