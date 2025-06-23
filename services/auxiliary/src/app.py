@@ -3,8 +3,10 @@ import os
 import boto3
 
 app = Flask(__name__)
-VERSION = os.getenv("VERSION", "unknown")
 
+VERSION = os.getenv("VERSION", "unknown")
+REGION = os.getenv("AWS_REGION")
+                   
 @app.route('/version', methods=['GET'])
 def get_version():
     return jsonify({"auxiliary_version": VERSION})
@@ -21,7 +23,7 @@ def list_buckets():
 
 @app.route('/parameters', methods=['GET'])
 def list_parameters():
-    ssm = boto3.client('ssm')
+    ssm = boto3.client("ssm", region_name=REGION)
     response = ssm.describe_parameters()
     parameter_names = [p['Name'] for p in response.get('Parameters', [])]
     return jsonify({
@@ -31,7 +33,7 @@ def list_parameters():
 
 @app.route('/parameter/<name>', methods=['GET'])
 def get_parameter(name):
-    ssm = boto3.client('ssm')
+    ssm = boto3.client("ssm", region_name=REGION)
     response = ssm.get_parameter(Name=name, WithDecryption=True)
     return jsonify({
         "name": name,

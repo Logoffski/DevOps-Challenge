@@ -33,9 +33,9 @@ resource "kubernetes_secret" "aws_creds" {
   }
 
   data = {
-    AWS_ACCESS_KEY_ID     = base64encode(aws_iam_access_key.app_service_user.id)
-    AWS_SECRET_ACCESS_KEY = base64encode(aws_iam_access_key.app_service_user.secret)
-    AWS_REGION            = base64encode(var.aws_region)
+    AWS_ACCESS_KEY_ID     = aws_iam_access_key.app_service_user.id
+    AWS_SECRET_ACCESS_KEY = aws_iam_access_key.app_service_user.secret
+    AWS_REGION            = var.aws_region
   }
 
   type = "Opaque"
