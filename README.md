@@ -256,8 +256,8 @@ In case you want to clone this repository and use your own images, replace the r
           image: ghcr.io/${REPO_OWNER}/${IMAGE_NAME}:latest
           ports:
             - containerPort: 8001
-`infra/argocd/{main,auxiliary}.yaml`
 ```
+`infra/argocd/{main,auxiliary}.yaml`
 ```
 spec:
   project: default
@@ -268,9 +268,9 @@ spec:
 ```
 
 ### 7.4 Network setup
-Both applications and ArgoCD have a Kubernetes Service with type *ClusterIP* for ease of use in production scenarios when an ingress/ingress-controller is present.
+Both applications and ArgoCD have a Kubernetes Service with type **ClusterIP** for ease of use in production scenarios when an ingress/ingress-controller is present.
 
-For local development, the recommended approach is to port-forward both *ArgoCD* and *main-api* to your local machine:
+For local development, the recommended approach is to port-forward both **ArgoCD** and **main-api** to your local machine:
 
 ```bash
 kubectl port-forward -n argocd svc/argocd-server 8081:443
