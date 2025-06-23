@@ -28,7 +28,7 @@ terraform {
 
 provider "aws" {
   region = var.aws_region
-  profile = "AdministratorAccess-487410309821"
+  profile = var.aws_profile
   default_tags {
     tags = {
       env = local.environment_name

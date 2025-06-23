@@ -212,28 +212,68 @@ Both report their `VERSION` in the response.
 
 ## 7. Local Development
 
-### 7.1. Minikube Setup
+The following documentation assumes you already have an AWS account and a working, accessible kubernetes cluster deployed and set as your current `kubectl` context.
 
-Ensure your `~/.kube/config` is using:
+### 7.1. Terraform Setup
 
-```yaml
-config_context: "minikube"
+Configure AWS provider in both *global* and *environment* modules:
+
+The code is designed to use your local cached IAM credentials, created via `aws sso configure` and `aws sso login --profile "yourprofilename"`
+
+To use your profile, create a terraform.tfvars file in both modules with the following inside:
+```hcl
+aws_profile = "yourprofilename"
 ```
+Alternatively, you can use any other authentication method supported by the AWS provider.
+Lastly, change `aws_region` in variables.tf in both root modules to your desired region.
 
 ### 7.2. Local Apply
 
 ```bash
 # Global setup
+terraform -chdir=infra/terraform/global workspace new global
 terraform -chdir=infra/terraform/global apply
 
 # Environment setup
-terraform -chdir=infra/terraform/environment workspace new dev
+terraform -chdir=infra/terraform/environment workspace new test
 terraform -chdir=infra/terraform/environment apply
 ```
 
+### 7.3. ArgoCD setup
+
+In case you want to clone this repository and use your own images, replace the repository in the following files:
+
+`deploy/{main,auxiliary}/deployment.yaml`
+```
+    spec:
+      containers:
+        - name: auxiliary-service
+          image: ghcr.io/${REPO_OWNER}/${IMAGE_NAME}:latest
+          ports:
+            - containerPort: 8001
+`infra/argocd/{main,auxiliary}.yaml`
+```
+```
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/${REPO_OWNER}/${REPO_NAME}.git
+    targetRevision: HEAD
+    path: deploy/main
+```
+
+### 7.4 Network setup
+Both applications and ArgoCD have a Kubernetes Service with type *ClusterIP* for ease of use in production scenarios when an ingress/ingress-controller is present.
+
+For local development, the recommended approach is to port-forward both *ArgoCD* and *main-api* to your local machine:
+
+```bash
+kubectl port-forward -n argocd svc/argocd-server 8081:443
+kubectl port-forward -n main-api service/main-api 8080:80
+```
 ---
 
-## 8. API Usage Examples
+## 8. API Usage & Examples
 
 ### 8.1. Health Checks
 
@@ -262,4 +302,14 @@ GET /buckets
 GET /parameters
 
 GET /parameter?name=/test/apps/FOO
+```
+
+### 8.4. Request examples
+
+```bash
+curl http://localhost:8080/parameter?name=/test/apps/config/env_name
+{"auxiliary_version":"05381237521317c714dd0cf8eaf6d7268d889715","main_version":"05381237521317c714dd0cf8eaf6d7268d889715","name":"/test/apps/config/env_name","value":"test"}
+
+curl http://localhost:8080/buckets
+{"auxiliary_version":"05381237521317c714dd0cf8eaf6d7268d889715","buckets":["test-apps-main","test-apps-secondary"],"main_version":"05381237521317c714dd0cf8eaf6d7268d889715"}
 ```
